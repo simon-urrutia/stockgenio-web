@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockGenio - El Cerebro de tu Negocio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Pantalla de Inicio de Sesión / Registro -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <h2>✨ StockGenio</h2>
+            <p class="auth-subtitle">El cerebro de tu negocio: ingresá tu usuario y contraseña para abrir tu planilla</p>
+            
+            <div class="auth-form">
+                <div class="input-group">
+                    <label for="usernameInput">Usuario</label>
+                    <input type="text" id="usernameInput" placeholder="Ej: mi_negocio" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="passwordInput">Contraseña</label>
+                    <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <p id="authMessage" class="auth-message"></p>
+                <div class="auth-buttons">
+                    <button id="loginBtn" class="btn primary full-width">🔑 Iniciar Sesión</button>
+                    <button id="registerBtn" class="btn secondary full-width">🚀 Crear Cuenta Nueva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="app-header">
+        <div class="header-content">
+            <div>
+                <h1>✨ StockGenio</h1>
+                <p>El Cerebro de tu Negocio — Control de Inventario, Stock y Precios de Alto Rendimiento</p>
+            </div>
+            <div class="header-right">
+                <span id="saveStatusBadge" class="save-badge">✅ Guardado automático activo</span>
+                <span id="currentUserBadge" class="user-badge">👤 Usuario: -</span>
+                <button id="settingsBtn" class="settings-btn" title="Ajustes de porcentaje">
+                    ⚙️ Ajustes
+                </button>
+                <button id="logoutBtn" class="btn danger" title="Guardar y salir">
+                    🔒 Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal de Ajustes (Tuerca) -->
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h3>⚙️ Ajustes de Fórmulas</h3>
+            <p>Configurá qué porcentaje del <strong>Precio Lista</strong> se muestra en la columna <strong>Precio Efectivo</strong>:</p>
+            <div class="setting-control">
+                <label for="cashPercentInput">Porcentaje Precio Efectivo (%):</label>
+                <input type="number" id="cashPercentInput" min="1" max="200" value="80">
+            </div>
+            <div class="modal-actions">
+                <button id="closeSettingsBtn" class="btn secondary">Cancelar</button>
+                <button id="saveSettingsBtn" class="btn primary">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="app-container">
+        <!-- Bloc de notas superior -->
+        <section class="notepad-section">
+            <label for="notepad">📝 Bloc de Notas Rápido:</label>
+            <textarea id="notepad" placeholder="Escribí acá recordatorios, pedidos pendientes, ideas o notas rápidas del día..."></textarea>
+        </section>
+
+        <!-- Barra de herramientas y acciones -->
+        <section class="toolbar">
+            <div class="toolbar-left">
+                <button id="undoBtn" class="btn undo-btn" disabled title="Deshacer el último cambio (Ctrl+Z)">
+                    ↩️ Deshacer
+                </button>
+                <button id="clearFiltersBtn" class="btn secondary">🧹 Limpiar Filtros</button>
+                <button id="boldBtn" class="btn format-btn" title="Seleccioná una palabra con el mouse y hacé clic acá (o usá Ctrl+B)">
+                    <strong>B</strong> Negrita
+                </button>
+                <span id="clipboardStatus" class="clipboard-badge">💡 Ctrl+C copia y limpia selección | Ctrl+V pega texto limpio | Ctrl+Z deshace</span>
+            </div>
+            <div class="actions">
+                <div class="color-picker-wrapper">
+                    <label for="cellColorPicker">Color:</label>
+                    <input type="color" id="cellColorPicker" value="#f4f1ea">
+                </div>
+                <div class="insert-group">
+                    <input type="number" id="insertCountInput" value="1" min="1" max="7000" title="Cantidad de filas a agregar">
+                    <input type="number" id="insertPosInput" placeholder="En fila N° (opc.)" min="1" title="En qué número de fila insertarlas (vacío = al final)">
+                    <button id="addRowBtn" class="btn primary">➕ Insertar Filas</button>
+                </div>
+                <button id="deleteRowBtn" class="btn danger">🗑️ Eliminar Filas</button>
+            </div>
+        </section>
+
+        <!-- Tabla tipo Excel con Virtual Scrolling y filtros por columna -->
+        <section id="tableContainer" class="table-container">
+            <table id="spreadsheetTable">
+                <thead>
+                    <!-- Fila de barras de búsqueda -->
+                    <tr class="filter-row">
+                        <th></th>
+                        <th></th>
+                        <th><input type="text" class="col-filter" data-col="temporada" placeholder="🔍 Temporada..."></th>
+                        <th><input type="text" class="col-filter" data-col="marca" placeholder="🔍 Marca..."></th>
+                        <th><input type="text" class="col-filter" data-col="codigo" placeholder="🔍 Código..."></th>
+                        <th><input type="text" class="col-filter" data-col="desc" placeholder="🔍 Descripción..."></th>
+                        <th><input type="text" class="col-filter" data-col="talle" placeholder="🔍 Talle..."></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <!-- Fila de títulos de columnas -->
+                    <tr class="header-row">
+                        <th class="select-col">Sel.</th>
+                        <th class="num-col">N°</th>
+                        <th>Temporada</th>
+                        <th>Marca</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Talle</th>
+                        <th>Cantidad Comprada</th>
+                        <th>Cantidad Vendida</th>
+                        <th>Cantidad en Stock</th>
+                        <th>Precio Lista</th>
+                        <th id="efectivoHeader">Precio Efectivo (80%)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Las filas visibles se renderizan dinámicamente mediante Virtual Scrolling -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Tarjeta de Resumen / Cantidad Total -->
+        <section class="summary-section">
+            <div class="summary-card">
+                <span>📋 Filas visibles: <strong id="visibleRowsCount">0</strong></span>
+                <span class="summary-divider">|</span>
+                <span>📦 Cantidad Total en Stock (según filtros):</span>
+                <span id="totalQuantity" class="summary-value">0</span>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
