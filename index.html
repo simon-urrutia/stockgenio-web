@@ -40,8 +40,8 @@
             <div class="header-right">
                 <span id="saveStatusBadge" class="save-badge">✅ Guardado automático activo</span>
                 <span id="currentUserBadge" class="user-badge">👤 Usuario: -</span>
-                <button id="settingsBtn" class="settings-btn" title="Ajustes de porcentaje">
-                    ⚙️ Ajustes
+                <button id="settingsBtn" class="settings-btn" title="Ajustes y Calendario de Ventas">
+                    ⚙️ Ajustes y Calendario
                 </button>
                 <button id="logoutBtn" class="btn danger" title="Guardar y salir">
                     🔒 Cerrar Sesión
@@ -50,18 +50,63 @@
         </div>
     </header>
 
-    <!-- Modal de Ajustes (Tuerca) -->
+    <!-- Modal de Ajustes y Calendario de Ventas (Tuerca) -->
     <div id="settingsModal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <h3>⚙️ Ajustes de Fórmulas</h3>
-            <p>Configurá qué porcentaje del <strong>Precio Lista</strong> se muestra en la columna <strong>Precio Efectivo</strong>:</p>
-            <div class="setting-control">
-                <label for="cashPercentInput">Porcentaje Precio Efectivo (%):</label>
-                <input type="number" id="cashPercentInput" min="1" max="200" value="80">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h3>⚙️ Ajustes y Calendario de Ventas</h3>
+                <button id="closeSettingsBtn" class="close-icon-btn" title="Cerrar">✖</button>
             </div>
-            <div class="modal-actions">
-                <button id="closeSettingsBtn" class="btn secondary">Cancelar</button>
-                <button id="saveSettingsBtn" class="btn primary">Guardar Cambios</button>
+
+            <!-- Bloque 1: Configuración de porcentaje -->
+            <div class="settings-block">
+                <h4>💵 Fórmula de Precio Efectivo</h4>
+                <p>Configurá qué porcentaje del <strong>Precio Lista</strong> se calcula en la columna <strong>Precio Efectivo</strong>:</p>
+                <div class="setting-control">
+                    <label for="cashPercentInput">Porcentaje Precio Efectivo (%):</label>
+                    <div class="setting-input-action">
+                        <input type="number" id="cashPercentInput" min="1" max="200" value="80">
+                        <button id="saveSettingsBtn" class="btn primary">Guardar %</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloque 2: Calendario de Ventas (Mes actual y mes anterior) -->
+            <div class="settings-block calendar-block">
+                <div class="calendar-top-bar">
+                    <div>
+                        <h4>📅 Registro Diario de Ventas</h4>
+                        <p class="calendar-note">🧹 Autolimpieza activa: solo se guardan el <strong>mes actual y el anterior</strong> para ahorrar memoria.</p>
+                    </div>
+                    <div class="calendar-nav">
+                        <button id="prevMonthBtn" class="btn secondary btn-sm">◀ Mes Anterior</button>
+                        <span id="calendarMonthLabel" class="calendar-month-title">-</span>
+                        <button id="nextMonthBtn" class="btn secondary btn-sm">Mes Actual ▶</button>
+                    </div>
+                </div>
+
+                <div class="calendar-layout">
+                    <!-- Grilla del mes -->
+                    <div class="calendar-grid-wrapper">
+                        <div class="calendar-weekdays">
+                            <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+                        </div>
+                        <div id="calendarDaysGrid" class="calendar-days-grid">
+                            <!-- Días generados dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Detalle de lo vendido en el día seleccionado -->
+                    <div class="calendar-details-panel">
+                        <div class="details-header">
+                            <h5 id="selectedDayTitle">Seleccioná un día</h5>
+                            <span id="selectedDayTotalBadge" class="day-total-badge">0 u. vendidas</span>
+                        </div>
+                        <ul id="selectedDaySalesList" class="sales-log-list">
+                            <!-- Lista de productos vendidos ese día -->
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -83,7 +128,7 @@
                 <button id="boldBtn" class="btn format-btn" title="Seleccioná una palabra con el mouse y hacé clic acá (o usá Ctrl+B)">
                     <strong>B</strong> Negrita
                 </button>
-                <span id="clipboardStatus" class="clipboard-badge">💡 Ctrl+C copia y limpia selección | Ctrl+V pega texto limpio | Ctrl+Z deshace</span>
+                <span id="clipboardStatus" class="clipboard-badge">💡 Flechas ⬆️⬇️⬅️➡️ para moverte | Seleccioná varias celdas y escribí en todas a la vez</span>
             </div>
             <div class="actions">
                 <div class="color-picker-wrapper">
